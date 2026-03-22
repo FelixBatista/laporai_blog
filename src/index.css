@@ -1,0 +1,92 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@theme {
+  --font-headline: "Noto Serif", serif;
+  --font-body: "Inter", sans-serif;
+  --font-label: "Inter", sans-serif;
+
+  --color-on-primary-container: #fffbff;
+  --color-inverse-primary: #ffb5a0;
+  --color-primary-fixed: #ffdbd1;
+  --color-inverse-surface: #233144;
+  --color-outline: #907067;
+  --color-tertiary-fixed: #d3e6e5;
+  --color-on-surface-variant: #5b4039;
+  --color-background: #f8f9ff;
+  --color-on-secondary-fixed: #0d1c2f;
+  --color-on-error: #ffffff;
+  --color-secondary-fixed: #d5e3fd;
+  --color-on-primary-fixed-variant: #872000;
+  --color-secondary: #515f74;
+  --color-outline-variant: #e4beb4;
+  --color-on-primary-fixed: #3b0900;
+  --color-on-secondary-container: #57657b;
+  --color-surface-container-highest: #d5e3fd;
+  --color-on-tertiary-container: #f3fffd;
+  --color-tertiary-fixed-dim: #b7cac9;
+  --color-on-primary: #ffffff;
+  --color-on-secondary: #ffffff;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container: #e6eeff;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary: #4d5f5e;
+  --color-secondary-container: #d5e3fd;
+  --color-surface: #f8f9ff;
+  --color-on-error-container: #93000a;
+  --color-inverse-on-surface: #ebf1ff;
+  --color-primary-fixed-dim: #ffb5a0;
+  --color-on-tertiary-fixed: #0d1e1e;
+  --color-tertiary-container: #667877;
+  --color-error: #ba1a1a;
+  --color-primary-container: #d83a02;
+  --color-surface-dim: #ccdbf4;
+  --color-surface-tint: #b12d00;
+  --color-surface-container-high: #dde9ff;
+  --color-secondary-fixed-dim: #b9c7e0;
+  --color-surface-container-low: #eff4ff;
+  --color-primary: #ad2c00;
+  --color-on-surface: #0d1c2f;
+  --color-on-background: #0d1c2f;
+  --color-on-secondary-fixed-variant: #3a485c;
+  --color-surface-bright: #f8f9ff;
+  --color-surface-variant: #d5e3fd;
+  --color-on-tertiary-fixed-variant: #384a49;
+  --color-error-container: #ffdad6;
+
+  --radius-DEFAULT: 0.125rem;
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.5rem;
+  --radius-full: 0.75rem;
+}
+
+@layer base {
+  body {
+    @apply bg-background font-body text-on-background antialiased;
+  }
+
+  ::selection {
+    @apply bg-primary/20 text-primary;
+  }
+
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-surface;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-outline-variant rounded-full hover:bg-secondary/30 transition-colors;
+  }
+}
+
+@layer utilities {
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+  .editorial-shadow {
+    box-shadow: 0px 12px 32px rgba(13, 28, 47, 0.06);
+  }
+}
