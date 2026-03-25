@@ -1,0 +1,14 @@
+{
+  "title": "Image 5",
+  "excerpt": "Registro fotográfico: Image 5.",
+  "category": "PHOTOGRAPHY",
+  "date": "2026-03-25T22:58:13.743032Z",
+  "readTime": "1 min de leitura",
+  "image": "/uploads/image-5.png",
+  "tags": "PHOTOGRAPHY",
+  "author": {
+    "name": "Larissa Vasconcelos",
+    "role": "Autora"
+  },
+  "body": "![Image 5](/uploads/image-5.png)\n\nRegistro publicado na seção de fotografia."
+}

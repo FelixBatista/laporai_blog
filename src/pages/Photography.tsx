@@ -1,9 +1,20 @@
 import React, { useState } from 'react';
-import { MOCK_PHOTOS } from '../constants';
 import { Photo } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
+import { getPhotographyPosts } from '../lib/posts';
 
 const Photography: React.FC = () => {
+  const photoPosts = getPhotographyPosts();
+  const photos: Photo[] = photoPosts.map((post) => ({
+    id: post.id,
+    title: post.title,
+    location: post.category || 'Sem localização definida',
+    camera: 'Autor',
+    lens: post.author.name,
+    image: post.image,
+    category: post.category || 'Photograph',
+  }));
+
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(null);
 
   const openLightbox = (index: number) => {
@@ -18,19 +29,19 @@ const Photography: React.FC = () => {
 
   const nextPhoto = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (selectedPhotoIndex !== null) {
-      setSelectedPhotoIndex((selectedPhotoIndex + 1) % MOCK_PHOTOS.length);
+    if (selectedPhotoIndex !== null && photos.length > 0) {
+      setSelectedPhotoIndex((selectedPhotoIndex + 1) % photos.length);
     }
   };
 
   const prevPhoto = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (selectedPhotoIndex !== null) {
-      setSelectedPhotoIndex((selectedPhotoIndex - 1 + MOCK_PHOTOS.length) % MOCK_PHOTOS.length);
+    if (selectedPhotoIndex !== null && photos.length > 0) {
+      setSelectedPhotoIndex((selectedPhotoIndex - 1 + photos.length) % photos.length);
     }
   };
 
-  const selectedPhoto = selectedPhotoIndex !== null ? MOCK_PHOTOS[selectedPhotoIndex] : null;
+  const selectedPhoto = selectedPhotoIndex !== null ? photos[selectedPhotoIndex] : null;
 
   return (
     <main className="pt-32 max-w-7xl mx-auto px-8">
@@ -62,7 +73,7 @@ const Photography: React.FC = () => {
 
       {/* Bento Gallery Grid */}
       <section className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-24">
-        {MOCK_PHOTOS.slice(0, 5).map((photo, index) => {
+        {photos.slice(0, 5).map((photo, index) => {
           let colSpan = "md:col-span-4";
           let height = "h-[336px]";
           
@@ -98,7 +109,40 @@ const Photography: React.FC = () => {
             </div>
           );
         })}
+        {photos.length === 0 && (
+          <div className="md:col-span-12 bg-surface-container-low rounded-lg p-10 text-center text-secondary">
+            Ainda não há conteúdos com a tag <strong>PHOTOGRAPHY</strong>. Crie no Decap CMS para aparecer aqui.
+          </div>
+        )}
       </section>
+
+      {photos.length > 5 && (
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-24">
+          {photos.slice(5).map((photo, index) => {
+            const lightboxIndex = index + 5;
+            return (
+              <div
+                key={photo.id}
+                className="group cursor-pointer"
+                onClick={() => openLightbox(lightboxIndex)}
+              >
+                <div className="relative overflow-hidden rounded-lg bg-surface-container-low h-[300px]">
+                  <img
+                    alt={photo.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    src={photo.image}
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-on-surface/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-6">
+                    <span className="font-label text-white text-xs tracking-widest font-bold uppercase">{photo.category}</span>
+                    <h3 className="font-headline text-lg text-white mt-1">{photo.title}</h3>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </section>
+      )}
 
       {/* Newsletter / CTA: Tonal Layering */}
       <section className="bg-surface-container-low rounded-lg p-12 md:p-24 flex flex-col items-center text-center">
@@ -202,7 +246,7 @@ const Photography: React.FC = () => {
                 <span className="material-symbols-outlined text-4xl">chevron_left</span>
               </button>
               <span className="font-label text-xs tracking-[0.4em]">
-                {String(selectedPhotoIndex! + 1).padStart(2, '0')} / {String(MOCK_PHOTOS.length).padStart(2, '0')}
+                {String(selectedPhotoIndex! + 1).padStart(2, '0')} / {String(photos.length).padStart(2, '0')}
               </span>
               <button className="hover:text-white transition-colors" onClick={nextPhoto}>
                 <span className="material-symbols-outlined text-4xl">chevron_right</span>

@@ -26,7 +26,12 @@ collections:
       - { label: "Date", name: "date", widget: "datetime" }
       - { label: "Read time", name: "readTime", widget: "string", default: "5 min de leitura" }
       - { label: "Cover image", name: "image", widget: "image" }
-      - { label: "Tags", name: "tags", widget: "list", default: [] }
+      - label: "Tag de seção"
+        name: "tags"
+        widget: "select"
+        options: ["BLOG", "PHOTOGRAPHY"]
+        default: "BLOG"
+        hint: "Escolha BLOG para posts de texto ou PHOTOGRAPHY para fotos."
 
       - label: "Author"
         name: "author"

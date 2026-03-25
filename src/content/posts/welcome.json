@@ -1,15 +1,15 @@
 {
-    "title": "Bem-vindo ao Lá por Aí",
-    "excerpt": "Primeiro post do blog, agora editável pelo CMS.",
-    "category": "EDITORIAL",
-    "date": "2026-03-25T10:00:00.000Z",
-    "readTime": "3 min de leitura",
-    "image": "/uploads/cover-placeholder.jpg",
-    "tags": ["BLOG", "EDITORIAL"],
-    "author": {
-      "name": "Félix",
-      "role": "Autor",
-      "avatar": "/uploads/avatar-placeholder.jpg"
-    },
-    "body": "## Olá\n\nEste é o primeiro post publicado via Decap CMS."
-  }
+  "title": "Bem-vindo ao Lá por Aí",
+  "excerpt": "Primeiro post do blog, agora editável pelo CMS.",
+  "category": "EDITORIAL",
+  "date": "2026-03-25T10:00:00.000Z",
+  "readTime": "3 min de leitura",
+  "image": "/uploads/cover-placeholder.jpg",
+  "tags": "BLOG",
+  "author": {
+    "name": "Félix",
+    "role": "Autor",
+    "avatar": "/uploads/avatar-placeholder.jpg"
+  },
+  "body": "## Olá\n\nEste é o primeiro post publicado via Decap CMS."
+}

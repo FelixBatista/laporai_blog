@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { getAllPosts } from '../lib/posts';
+import { getBlogPosts } from '../lib/posts';
 import type { Post } from '../types';
 
 function pickPost(posts: Post[], index: number) {
@@ -9,7 +9,7 @@ function pickPost(posts: Post[], index: number) {
 }
 
 const Blog: React.FC = () => {
-  const posts = getAllPosts();
+  const posts = getBlogPosts();
   const featuredPost = pickPost(posts, 0);
   const latestPost = pickPost(posts, 1);
   const sidePost = pickPost(posts, 2);
