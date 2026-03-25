@@ -9,21 +9,21 @@ const About: React.FC = () => {
           {/* Large Image Frame with Asymmetric Margin Logic */}
           <div className="w-full md:w-5/12 aspect-[4/5] overflow-hidden rounded-lg shadow-sm">
             <img 
-              alt="Portrait of the curator" 
+              alt="Retrato de Larissa Vasconcelos" 
               className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700" 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-v-SOOLVUerLjSl1nVFT_E9exxViUqxWtd-PPFObPHF3H4A8J4-KUOaUyrmprMM_Emfz-rrIZjotBU80-K1UK3O-2POkvOItMtPVxcvIyWCC0I6Ut6F_xe-AWDde0aXT9Q3iB-6JzjZi8faPd--Hvi_XrmeSizbKduVB09FnPOPysZRh42V0TbU-3Ax-NCNc4YwXrQgn0JESAs4AL2JTjxKzk2TsbjSP1CJzlQv85h4dY-bpM7fNA36GM5muwMb3GgAX1Nf-4nqU"
+              src="/uploads/IMG_1608_HEIC.webp"
               referrerPolicy="no-referrer"
             />
           </div>
           {/* Headline Overlap Logic */}
           <div className="w-full md:w-7/12 md:-ml-20 md:mb-12 z-10">
-            <span className="font-label text-xs tracking-widest text-primary font-bold mb-4 block uppercase">O AUTOR</span>
+            <span className="font-label text-xs tracking-widest text-primary font-bold mb-4 block uppercase">LÁ POR AÍ</span>
             <h1 className="font-headline text-5xl md:text-7xl font-bold text-on-surface leading-tight tracking-tight mb-8">
-              Preservando os <br/> <span className="italic font-normal">momentos de calma</span> em um <br/> mundo barulhento.
+              A verdade é: <br/> <span className="italic font-normal">eu também estou</span> <br/> me conhecendo.
             </h1>
             <div className="max-w-xl">
               <p className="text-lg text-secondary leading-relaxed mb-6">
-                Sou Julian Vane, fotógrafo e entusiasta de viagens. O Lá por Aí é meu diário visual — um espaço dedicado à interseção entre a viagem moderna e a preservação de memórias.
+                Welcome to my place! Aqui compartilho vivências de morar fora, descobertas e tudo que cruza meu caminho nesse processo. Escrever também é parte da jornada: um jeito de praticar, registrar e construir meu portfólio.
               </p>
             </div>
           </div>
@@ -34,13 +34,13 @@ const About: React.FC = () => {
       <section className="bg-surface-container-low py-24">
         <div className="max-w-7xl mx-auto px-8 grid grid-cols-1 md:grid-cols-2 gap-24">
           <div className="space-y-8">
-            <h2 className="font-headline text-3xl font-bold">A Visão</h2>
+            <h2 className="font-headline text-3xl font-bold">De perto e pessoalmente</h2>
             <div className="space-y-6 text-on-surface/80 leading-[1.8] font-light">
               <p>
-                Fotografar é mais do que capturar uma cena; é um ato de documentação emocional. Há mais de uma década, percorro o mundo, buscando padrões em como habitamos os espaços e as histórias que eles contam.
+                Eu sou Larissa Vasconcelos, ou apenas Lalá. Recifense de nascença e criada pelo nordeste, sul, sudeste e centro-oeste brasileiro. Essas andanças me moldaram e reforçaram uma alma curiosa, comunicativa e sempre em busca do meu lugar no mundo.
               </p>
               <p>
-                O Lá por Aí começou como um sistema pessoal para catalogar minhas fotos. Hoje, evoluiu para um blog onde exploro a "alma" dos destinos através de uma lente minimalista. Priorizo a profundidade sobre o volume, e o silêncio sobre o espetáculo.
+                Acredito que sinceridade e autenticidade são essenciais para prosperar no mundo virtual de hoje. Meu blog celebra personalidade, senso de humor e coração; minha conexão com o mundo foi a motivação para compartilhar essas experiências. Sugestões e críticas são sempre bem-vindas.
               </p>
             </div>
             <div className="pt-8">
@@ -56,16 +56,16 @@ const About: React.FC = () => {
             <div className="col-span-2 bg-surface-container-lowest p-8 rounded-xl">
               <span className="material-symbols-outlined text-primary mb-4" style={{ fontVariationSettings: "'FILL' 1" }}>camera</span>
               <h3 className="font-headline text-xl font-bold mb-2">Projeto Atual</h3>
-              <p className="text-sm text-secondary">"Portos Esquecidos" — Um estudo de longa duração sobre o patrimônio marítimo na costa do Mediterrâneo.</p>
+              <p className="text-sm text-secondary">Construindo um diário vivo sobre morar fora, viagens e os aprendizados que aparecem entre um destino e outro.</p>
             </div>
             <div className="bg-surface-container-highest p-6 rounded-xl">
               <span className="material-symbols-outlined text-on-secondary-container mb-3">auto_awesome</span>
               <h4 className="font-bold text-sm mb-1">Filosofia</h4>
-              <p className="text-xs text-on-secondary-container/80">Documentação através da disciplina e contenção.</p>
+              <p className="text-xs text-on-secondary-container/80">Sinceridade e autenticidade antes de qualquer performance.</p>
             </div>
             <div className="bg-primary text-white p-6 rounded-xl flex flex-col justify-end">
               <h4 className="font-bold text-sm mb-1">Status</h4>
-              <p className="text-xs opacity-90">Atualmente em Reykjavik, Islândia.</p>
+              <p className="text-xs opacity-90">Aberta a novas conexões e histórias.</p>
             </div>
           </div>
         </div>
