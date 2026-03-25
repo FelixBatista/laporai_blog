@@ -1,0 +1,39 @@
+backend:
+  name: github
+  repo: FelixBatista/laporai_blog
+  branch: main
+  base_url: https://decap.laporai.com
+  auth_endpoint: /auth
+
+media_folder: "public/uploads"
+public_folder: "/uploads"
+
+collections:
+  - name: "posts"
+    label: "Posts"
+    label_singular: "Post"
+    folder: "src/content/posts"
+    create: true
+    format: "json"
+    extension: "json"
+    slug: "{{slug}}"
+    summary: "{{title}}"
+
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Excerpt", name: "excerpt", widget: "text" }
+      - { label: "Category", name: "category", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Read time", name: "readTime", widget: "string", default: "5 min de leitura" }
+      - { label: "Cover image", name: "image", widget: "image" }
+      - { label: "Tags", name: "tags", widget: "list", default: [] }
+
+      - label: "Author"
+        name: "author"
+        widget: "object"
+        fields:
+          - { label: "Name", name: "name", widget: "string" }
+          - { label: "Role", name: "role", widget: "string" }
+          - { label: "Avatar", name: "avatar", widget: "image", required: false }
+
+      - { label: "Body", name: "body", widget: "markdown" }
