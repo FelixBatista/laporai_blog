@@ -19,7 +19,7 @@ This project includes a production-ready newsletter flow:
 - `GET /api/newsletter/confirm?token=...`
 - `GET /api/newsletter/unsubscribe?token=...`
 - `POST /api/webhooks/resend`
-- `GET/POST /api/newsletter/admin` (secret-protected internal sender)
+- `POST /api/newsletter/admin` (secret-protected internal sender — UI at `/admin/newsletter`)
 
 ## Persistent Comments System (Cloudflare Pages + D1 + Turnstile)
 
@@ -34,7 +34,7 @@ This project now includes a first-party persistent comments system under `/api/c
   - `GET /api/comments/admin/list?status=pending`
   - `POST /api/comments/admin/moderate`
 - Internal moderation UI:
-  - `GET /comments-admin`
+  - `GET /admin/comments`
 
 ### Data ownership
 
@@ -160,15 +160,19 @@ Copy webhook secret into:
 
 ## Admin sending flow
 
-Internal admin sender endpoint:
+The newsletter admin UI is at:
 
-- `GET /api/newsletter/admin?secret=<NEWSLETTER_ADMIN_SECRET>`
+- `https://laporai.com/admin/newsletter`
 
-Use the form to send:
+Use the form to send (requires `NEWSLETTER_ADMIN_SECRET`):
 
 - Subject
 - HTML body
 - Optional plain text body
+
+The API endpoint `POST /api/newsletter/admin` accepts the secret via:
+- `Authorization: Bearer <NEWSLETTER_ADMIN_SECRET>` header
+- `x-newsletter-admin-secret: <NEWSLETTER_ADMIN_SECRET>` header
 
 Behavior:
 
@@ -193,7 +197,7 @@ Behavior:
    - Trigger webhook test from Resend dashboard
    - Open a post page (`/post/:slug`) and submit a comment
    - Confirm comment is saved in D1 and starts as `pending` (default)
-   - Approve via `/comments-admin` and confirm it appears publicly
+   - Approve via `/admin/comments` and confirm it appears publicly
 
 ## Turnstile setup (comments anti-spam)
 
@@ -208,7 +212,7 @@ Both frontend widget rendering and backend verification are required for comment
 
 ## Comment moderation flow
 
-1. Open `/comments-admin` in your site.
+1. Open `/admin/comments` (or click **Comentários** in the `/admin` top bar).
 2. Fill `COMMENTS_ADMIN_SECRET`.
 3. Filter `pending` comments and apply moderation actions:
    - approve

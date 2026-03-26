@@ -5,8 +5,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex" />
     <title>Lá por Aí — Admin</title>
+    <style>
+      [data-custom-nav] {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+    </style>
   </head>
   <body>
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+    <script>
+      (function () {
+        var CUSTOM_LINKS = [
+          { href: '/admin/comments', label: 'Comentários' },
+          { href: '/admin/newsletter', label: 'Newsletter' },
+        ];
+        var INJECTED_ATTR = 'data-custom-nav-injected';
+
+        function injectLinks() {
+          var header = document.querySelector('header');
+          if (!header) return;
+          if (header.getAttribute(INJECTED_ATTR) === 'true') return;
+
+          // Find the first anchor in the header — Decap renders nav links as <a> tags
+          var existingAnchors = header.querySelectorAll('a');
+          if (existingAnchors.length === 0) return;
+
+          // The first anchor is in the nav area; its parent is the nav container
+          var firstAnchor = existingAnchors[0];
+          var navContainer = firstAnchor.parentElement;
+          if (!navContainer) return;
+
+          header.setAttribute(INJECTED_ATTR, 'true');
+
+          CUSTOM_LINKS.forEach(function (link) {
+            if (header.querySelector('a[href="' + link.href + '"]')) return;
+
+            var a = document.createElement('a');
+            a.href = link.href;
+            a.textContent = link.label;
+            // Mirror the className from Decap's own nav links for perfect visual match
+            a.className = firstAnchor.className;
+            // Indicate active state for current page
+            if (window.location.pathname === link.href) {
+              a.style.opacity = '1';
+              a.style.fontWeight = '700';
+            }
+            navContainer.appendChild(a);
+          });
+        }
+
+        // Use MutationObserver to detect when Decap mounts its header
+        var observer = new MutationObserver(function () {
+          if (document.querySelector('header a')) {
+            injectLinks();
+          }
+        });
+        observer.observe(document.documentElement, { childList: true, subtree: true });
+
+        // Fallback: try immediately if header already exists
+        if (document.readyState !== 'loading') {
+          injectLinks();
+        } else {
+          document.addEventListener('DOMContentLoaded', injectLinks);
+        }
+      })();
+    </script>
   </body>
 </html>

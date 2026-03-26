@@ -12,8 +12,6 @@ import PostDetail from './pages/PostDetail';
 import Photography from './pages/Photography';
 import About from './pages/About';
 import Contact from './pages/Contact';
-import CommentsAdmin from './pages/CommentsAdmin';
-
 export default function App() {
   return (
     <Routes>
@@ -24,7 +22,6 @@ export default function App() {
         <Route path="photography" element={<Photography />} />
         <Route path="about" element={<About />} />
         <Route path="contact" element={<Contact />} />
-        <Route path="comments-admin" element={<CommentsAdmin />} />
         <Route path="*" element={<div className="min-h-[60vh] flex items-center justify-center font-headline text-2xl">Page under construction.</div>} />
       </Route>
     </Routes>
