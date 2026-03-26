@@ -18,6 +18,11 @@ function normalizePostTags(value: string[] | string): string[] {
   return value ? [value] : [];
 }
 
+function parseReadMinutes(readTime: string): number {
+  const m = readTime.match(/(\d+)/);
+  return m ? parseInt(m[1], 10) : 0;
+}
+
 export function getAllPosts(): Post[] {
   return Object.entries(modules)
     .map(([path, data]) => {
@@ -33,6 +38,23 @@ export function getAllPosts(): Post[] {
     .sort((a, b) => {
       return new Date(b.date).getTime() - new Date(a.date).getTime();
     });
+}
+
+/** Home “Recentes” vs “Populares”: recent = newest first; popular = popularity, then longer read time, then date. */
+export function sortPostsForHome(posts: Post[], mode: 'recent' | 'popular'): Post[] {
+  const copy = [...posts];
+  if (mode === 'recent') {
+    return copy.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }
+  return copy.sort((a, b) => {
+    const pa = a.popularity ?? 0;
+    const pb = b.popularity ?? 0;
+    if (pb !== pa) return pb - pa;
+    const ra = parseReadMinutes(a.readTime);
+    const rb = parseReadMinutes(b.readTime);
+    if (rb !== ra) return rb - ra;
+    return new Date(b.date).getTime() - new Date(a.date).getTime();
+  });
 }
 
 function normalizeTag(value: string): string {

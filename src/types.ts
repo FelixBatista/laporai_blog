@@ -12,6 +12,8 @@ export interface Post {
   };
   date: string;
   readTime: string;
+  /** Optional manual score for “Populares” ordering; higher appears first. */
+  popularity?: number;
   image: string;
   tags: string[];
 }

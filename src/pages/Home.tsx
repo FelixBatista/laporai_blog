@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { formatPostDate, getAllPosts } from '../lib/posts';
+import { formatPostDate, getAllPosts, sortPostsForHome } from '../lib/posts';
 import { subscribeToNewsletter, type SubscribeUiStatus } from '../lib/newsletter/client';
 import type { Post } from '../types';
 
@@ -10,15 +10,27 @@ function pickPost(posts: Post[], index: number) {
 }
 
 const Home: React.FC = () => {
-  const posts = getAllPosts();
+  const posts = React.useMemo(() => getAllPosts(), []);
+  const [sortMode, setSortMode] = React.useState<'recent' | 'popular'>('recent');
+  const sortedPosts = React.useMemo(
+    () => sortPostsForHome(posts, sortMode),
+    [posts, sortMode],
+  );
   const [email, setEmail] = React.useState('');
   const [company, setCompany] = React.useState('');
   const [status, setStatus] = React.useState<SubscribeUiStatus>('idle');
   const [feedback, setFeedback] = React.useState('');
-  const heroPost = pickPost(posts, 0);
-  const largeCardPost = pickPost(posts, 1) ?? heroPost;
-  const sideCardPost = pickPost(posts, 2) ?? heroPost;
-  const bottomCardPost = pickPost(posts, 3) ?? heroPost;
+  const heroPost = pickPost(sortedPosts, 0);
+  const largeCardPost = pickPost(sortedPosts, 1) ?? heroPost;
+  const sideCardPost = pickPost(sortedPosts, 2) ?? heroPost;
+  const bottomCardPost = pickPost(sortedPosts, 3) ?? heroPost;
+
+  const tabClass = (active: boolean) =>
+    `px-6 py-2 text-xs font-bold uppercase tracking-wider rounded-full transition-colors ${
+      active
+        ? 'bg-surface-container-high text-on-surface hover:bg-surface-dim'
+        : 'text-secondary hover:text-primary'
+    }`;
 
   const onSubscribe = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -96,12 +108,30 @@ const Home: React.FC = () => {
       <section className="max-w-7xl mx-auto px-8 py-24">
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
           <div>
-            <h2 className="font-headline text-4xl font-bold text-on-surface mb-4">Postagens Recentes</h2>
+            <h2 className="font-headline text-4xl font-bold text-on-surface mb-4">
+              {sortMode === 'recent' ? 'Postagens Recentes' : 'Postagens Populares'}
+            </h2>
             <p className="text-secondary max-w-md">Perspectivas curadas sobre o mundo através das minhas lentes e descobertas.</p>
           </div>
-          <div className="flex gap-4">
-            <button className="px-6 py-2 bg-surface-container-high text-on-surface text-xs font-bold uppercase tracking-wider rounded-full hover:bg-surface-dim transition-colors">Recentes</button>
-            <button className="px-6 py-2 text-secondary text-xs font-bold uppercase tracking-wider hover:text-primary transition-colors">Populares</button>
+          <div className="flex gap-4" role="tablist" aria-label="Ordenar postagens">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={sortMode === 'recent'}
+              className={tabClass(sortMode === 'recent')}
+              onClick={() => setSortMode('recent')}
+            >
+              Recentes
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={sortMode === 'popular'}
+              className={tabClass(sortMode === 'popular')}
+              onClick={() => setSortMode('popular')}
+            >
+              Populares
+            </button>
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
