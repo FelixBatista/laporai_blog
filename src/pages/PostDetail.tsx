@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getAllPosts } from '../lib/posts';
 import type { Post } from '../types';
@@ -46,9 +46,34 @@ function pickParagraphs(chunks: string[], start: number, count: number, fallback
   return selected.length > 0 ? selected : fallback;
 }
 
+interface PostComment {
+  id: string;
+  name: string;
+  message: string;
+  createdAt: string;
+}
+
+const COMMENTS_STORAGE_KEY_PREFIX = 'laporai:comments:';
+
+function formatCommentDate(value: string): string {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+
+  return new Intl.DateTimeFormat('pt-BR', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  }).format(date);
+}
+
 const PostDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const post = getAllPosts().find((item) => item.slug === slug || item.id === slug) ?? FALLBACK_POST;
+  const commentsStorageKey = useMemo(() => `${COMMENTS_STORAGE_KEY_PREFIX}${post.slug}`, [post.slug]);
+
+  const [comments, setComments] = useState<PostComment[]>([]);
+  const [nameInput, setNameInput] = useState('');
+  const [commentInput, setCommentInput] = useState('');
   const chunks = extractPlainTextChunks(post.body);
 
   const introQuote = chunks[0] ?? post.excerpt;
@@ -56,6 +81,47 @@ const PostDetail: React.FC = () => {
   const middleParagraphs = pickParagraphs(chunks, 3, 2, introParagraphs);
   const finalParagraphs = pickParagraphs(chunks, 5, 2, middleParagraphs);
   const extraParagraphs = chunks.slice(7);
+
+  useEffect(() => {
+    try {
+      const rawValue = window.localStorage.getItem(commentsStorageKey);
+      if (!rawValue) {
+        setComments([]);
+        return;
+      }
+
+      const parsed = JSON.parse(rawValue) as PostComment[];
+      if (!Array.isArray(parsed)) {
+        setComments([]);
+        return;
+      }
+
+      setComments(parsed);
+    } catch {
+      setComments([]);
+    }
+  }, [commentsStorageKey]);
+
+  function handleSubmitComment(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const trimmedName = nameInput.trim();
+    const trimmedComment = commentInput.trim();
+    if (!trimmedName || !trimmedComment) return;
+
+    const newComment: PostComment = {
+      id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      name: trimmedName,
+      message: trimmedComment,
+      createdAt: new Date().toISOString(),
+    };
+
+    const updatedComments = [newComment, ...comments];
+    setComments(updatedComments);
+    window.localStorage.setItem(commentsStorageKey, JSON.stringify(updatedComments));
+    setNameInput('');
+    setCommentInput('');
+  }
 
   return (
     <main className="pt-20">
@@ -202,52 +268,52 @@ const PostDetail: React.FC = () => {
           <h3 className="font-headline text-3xl text-on-surface font-bold mb-12">Reflexões</h3>
           {/* Existing Comments */}
           <div className="space-y-12 mb-20">
-            <div className="group">
-              <div className="flex justify-between items-baseline mb-4">
-                <span className="font-bold text-on-surface font-body">Julian Thorne</span>
-                <span className="text-xs text-secondary font-label uppercase tracking-wider">24 de Out, 2024</span>
-              </div>
-              <p className="text-on-surface/80 font-body leading-relaxed">
-                Este texto ressoa profundamente. Visitei Glencoe no outono passado e o silêncio que você descreve é exatamente o que ficou comigo. Não é um silêncio vazio, mas um silêncio pesado e significativo.
+            {comments.length === 0 ? (
+              <p className="text-on-surface/70 font-body leading-relaxed">
+                Ainda não há comentários neste post. Seja a primeira pessoa a compartilhar uma reflexão.
               </p>
-            </div>
-            <div className="group">
-              <div className="flex justify-between items-baseline mb-4">
-                <span className="font-bold text-on-surface font-body">Marcus Chen</span>
-                <span className="text-xs text-secondary font-label uppercase tracking-wider">26 de Out, 2024</span>
-              </div>
-              <p className="text-on-surface/80 font-body leading-relaxed">
-                A fotografia aqui é excepcional. Aquela foto da luz atingindo o pico - ela captura perfeitamente aquela "permissão" que você mencionou. Storytelling excepcional.
-              </p>
-            </div>
-            <div className="group">
-              <div className="flex justify-between items-baseline mb-4">
-                <span className="font-bold text-on-surface font-body">Sophia Lindholm</span>
-                <span className="text-xs text-secondary font-label uppercase tracking-wider">27 de Out, 2024</span>
-              </div>
-              <p className="text-on-surface/80 font-body leading-relaxed">
-                "O tempo não corre. Ele expira." Que sentimento lindo. É tão raro encontrar textos de viagem que foquem na paisagem interna tanto quanto na externa.
-              </p>
-            </div>
+            ) : (
+              comments.map((item) => (
+                <div className="group" key={item.id}>
+                  <div className="flex justify-between items-baseline mb-4">
+                    <span className="font-bold text-on-surface font-body">{item.name}</span>
+                    <span className="text-xs text-secondary font-label uppercase tracking-wider">
+                      {formatCommentDate(item.createdAt)}
+                    </span>
+                  </div>
+                  <p className="text-on-surface/80 font-body leading-relaxed">{item.message}</p>
+                </div>
+              ))
+            )}
           </div>
 
           {/* Comment Form */}
           <div className="bg-surface-container-low p-8 rounded-xl border border-outline-variant/10">
             <h4 className="font-headline text-xl text-on-surface mb-6">Deixe uma Reflexão</h4>
-            <form className="space-y-4">
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-secondary uppercase tracking-widest font-label" htmlFor="name">Nome</label>
-                  <input className="w-full bg-white border border-outline-variant/20 p-3 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary outline-none text-sm transition-all" id="name" placeholder="Seu nome" type="text" />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-secondary uppercase tracking-widest font-label" htmlFor="email">E-mail</label>
-                  <input className="w-full bg-white border border-outline-variant/20 p-3 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary outline-none text-sm transition-all" id="email" placeholder="Seu endereço de e-mail" type="email" />
-                </div>
+            <form className="space-y-4" onSubmit={handleSubmitComment}>
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-secondary uppercase tracking-widest font-label" htmlFor="name">Nome</label>
+                <input
+                  className="w-full bg-white border border-outline-variant/20 p-3 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary outline-none text-sm transition-all"
+                  id="name"
+                  placeholder="Seu nome"
+                  type="text"
+                  value={nameInput}
+                  onChange={(event) => setNameInput(event.target.value)}
+                  required
+                />
               </div>
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-secondary uppercase tracking-widest font-label" htmlFor="comment">Comentário</label>
-                <textarea className="w-full bg-white border border-outline-variant/20 p-3 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary outline-none text-sm transition-all resize-none" id="comment" placeholder="Compartilhe seus pensamentos..." rows={5}></textarea>
+                <textarea
+                  className="w-full bg-white border border-outline-variant/20 p-3 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary outline-none text-sm transition-all resize-none"
+                  id="comment"
+                  placeholder="Compartilhe seus pensamentos..."
+                  rows={5}
+                  value={commentInput}
+                  onChange={(event) => setCommentInput(event.target.value)}
+                  required
+                ></textarea>
               </div>
               <div className="pt-2">
                 <button className="bg-on-surface text-white font-bold py-3 px-8 rounded-lg hover:bg-primary transition-all uppercase tracking-widest text-[10px]" type="submit">Postar Reflexão</button>
