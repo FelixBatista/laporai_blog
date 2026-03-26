@@ -83,13 +83,14 @@ export const onRequestPost = async (context: any): Promise<Response> => {
 
   const campaignId = await createCampaign(env.DB, subject, html, text || null);
   const baseUrl = getBaseUrl(env, context.request.url);
+  const hasSegment = Boolean(env.NEWSLETTER_SEGMENT_ID || env.NEWSLETTER_AUDIENCE_ID);
 
   try {
-    if (env.NEWSLETTER_AUDIENCE_ID) {
+    if (hasSegment) {
       const broadcast = await createBroadcast(env, { subject, html, text: text || undefined });
       await markCampaignSent(env.DB, campaignId, broadcast.id, subscribers.length);
       await logEvent(env.DB, 'campaign_sent_broadcast', { campaignId, broadcastId: broadcast.id }, null);
-      return htmlResponse(adminFormHtml(`Campanha enviada via audience. ID: ${broadcast.id}`, secret));
+      return htmlResponse(adminFormHtml(`Campanha enviada via segment. ID: ${broadcast.id}`, secret));
     }
 
     let sentCount = 0;

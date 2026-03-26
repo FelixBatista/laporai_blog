@@ -9,7 +9,7 @@ import {
   setSubscriberResendContactId,
 } from '../../_lib/newsletter/repository';
 import { htmlResponse } from '../../_lib/newsletter/responses';
-import { upsertAudienceContact } from '../../_lib/newsletter/resend';
+import { upsertNewsletterContact } from '../../_lib/newsletter/resend';
 import { renderResultPage } from '../../_lib/newsletter/templates';
 import type { NewsletterEnv } from '../../_lib/newsletter/types';
 
@@ -45,7 +45,7 @@ export const onRequestGet = async (context: any): Promise<Response> => {
   await markSubscriberConfirmed(env.DB, row.subscriber_id);
 
   try {
-    const contact = await upsertAudienceContact(env, row.email);
+    const contact = await upsertNewsletterContact(env, row.email);
     if (contact?.id) {
       await setSubscriberResendContactId(env.DB, row.subscriber_id, contact.id);
     }

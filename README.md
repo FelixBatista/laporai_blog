@@ -96,7 +96,7 @@ Set these in **Cloudflare Pages -> Settings -> Environment variables**:
 - `NEWSLETTER_FROM_EMAIL`
 - `NEWSLETTER_REPLY_TO`
 - `NEWSLETTER_BASE_URL`
-- `NEWSLETTER_AUDIENCE_ID` (recommended)
+- `NEWSLETTER_SEGMENT_ID` (recommended)
 - `NEWSLETTER_ADMIN_SECRET`
 - `TURNSTILE_SITE_KEY`
 - `TURNSTILE_SECRET_KEY`
@@ -132,10 +132,10 @@ Typical required records:
 
 Use exactly the host/value records shown inside Resend for your account.
 
-### 3) Create audience
+### 3) Create segment
 
-- In Resend dashboard, create an Audience for newsletter recipients
-- Save the audience ID into `NEWSLETTER_AUDIENCE_ID`
+- In Resend dashboard, create a Segment for newsletter recipients
+- Save the segment ID into `NEWSLETTER_SEGMENT_ID`
 
 ### 4) Register webhook endpoint
 
@@ -174,8 +174,8 @@ Behavior:
 
 - Sends only to `confirmed` subscribers
 - Skips unsubscribed/bounced/complained users (by status)
-- Uses Resend Broadcasts when `NEWSLETTER_AUDIENCE_ID` is configured
-- Falls back to safe individual sends if no audience ID is set
+- Uses Resend Broadcasts when `NEWSLETTER_SEGMENT_ID` is configured
+- Falls back to safe individual sends if no segment ID is set
 - Logs campaign + send outcome in D1
 
 ## Local testing (Pages Functions + D1)

@@ -1,7 +1,6 @@
 import { getBaseUrl } from '../../_lib/newsletter/config';
 import { sha256Hex } from '../../_lib/newsletter/crypto';
 import {
-  findSubscriberById,
   findValidTokenByHash,
   logEvent,
   markSubscriberUnsubscribed,
@@ -9,7 +8,7 @@ import {
   setSubscriberResendContactId,
 } from '../../_lib/newsletter/repository';
 import { htmlResponse } from '../../_lib/newsletter/responses';
-import { unsubscribeAudienceContact, upsertAudienceContact } from '../../_lib/newsletter/resend';
+import { unsubscribeNewsletterContact, upsertNewsletterContact } from '../../_lib/newsletter/resend';
 import { renderResultPage } from '../../_lib/newsletter/templates';
 import type { NewsletterEnv } from '../../_lib/newsletter/types';
 
@@ -38,17 +37,12 @@ export const onRequestGet = async (context: any): Promise<Response> => {
   await markTokenUsed(env.DB, row.id);
   await markSubscriberUnsubscribed(env.DB, row.subscriber_id);
 
-  const subscriber = await findSubscriberById(env.DB, row.subscriber_id);
-  let contactId = subscriber?.resend_contact_id ?? null;
   try {
-    if (!contactId) {
-      const contact = await upsertAudienceContact(env, row.email);
-      if (contact?.id) {
-        contactId = contact.id;
-        await setSubscriberResendContactId(env.DB, row.subscriber_id, contact.id);
-      }
+    const contact = await upsertNewsletterContact(env, row.email);
+    if (contact?.id) {
+      await setSubscriberResendContactId(env.DB, row.subscriber_id, contact.id);
     }
-    await unsubscribeAudienceContact(env, contactId);
+    await unsubscribeNewsletterContact(env, row.email);
   } catch (error) {
     await logEvent(
       env.DB,

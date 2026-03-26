@@ -30,6 +30,10 @@ async function resendFetch<T>(
   return (json.data ?? (json as unknown as T)) as T;
 }
 
+function getSegmentId(env: NewsletterEnv): string | undefined {
+  return env.NEWSLETTER_SEGMENT_ID || env.NEWSLETTER_AUDIENCE_ID || undefined;
+}
+
 export async function sendEmail(env: NewsletterEnv, params: {
   to: string[];
   subject: string;
@@ -51,40 +55,35 @@ export async function sendEmail(env: NewsletterEnv, params: {
   });
 }
 
-export async function upsertAudienceContact(
+export async function upsertNewsletterContact(
   env: NewsletterEnv,
   email: string
 ): Promise<{ id: string } | null> {
-  if (!env.NEWSLETTER_AUDIENCE_ID) return null;
+  const segmentId = getSegmentId(env);
   try {
-    const created = await resendFetch<{ id: string }>(env, `/audiences/${env.NEWSLETTER_AUDIENCE_ID}/contacts`, {
+    const created = await resendFetch<{ id: string }>(env, '/contacts', {
       method: 'POST',
-      body: JSON.stringify({ email, unsubscribed: false }),
+      body: JSON.stringify({
+        email,
+        unsubscribed: false,
+        segments: segmentId ? [{ id: segmentId }] : undefined,
+      }),
     });
     return created;
   } catch {
-    // Contact can already exist; lookup and update.
-    const list = await resendFetch<{ data?: Array<{ id: string; email: string }> } | Array<{ id: string; email: string }>>(
-      env,
-      `/audiences/${env.NEWSLETTER_AUDIENCE_ID}/contacts`,
-      { method: 'GET' }
-    );
-    const contacts = Array.isArray(list) ? list : (list.data ?? []);
-    const found = contacts.find((item) => item.email.toLowerCase() === email.toLowerCase());
-    if (!found) return null;
-    await resendFetch<{ id: string }>(env, `/audiences/${env.NEWSLETTER_AUDIENCE_ID}/contacts/${found.id}`, {
+    // Contact can already exist; update global subscription state.
+    const updated = await resendFetch<{ id: string }>(env, `/contacts/${encodeURIComponent(email)}`, {
       method: 'PATCH',
       body: JSON.stringify({ unsubscribed: false }),
     });
-    return { id: found.id };
+    return updated ?? null;
   }
 }
 
-export async function unsubscribeAudienceContact(env: NewsletterEnv, contactId: string | null): Promise<void> {
-  if (!env.NEWSLETTER_AUDIENCE_ID || !contactId) return;
+export async function unsubscribeNewsletterContact(env: NewsletterEnv, email: string): Promise<void> {
   await resendFetch<unknown>(
     env,
-    `/audiences/${env.NEWSLETTER_AUDIENCE_ID}/contacts/${contactId}`,
+    `/contacts/${encodeURIComponent(email)}`,
     {
       method: 'PATCH',
       body: JSON.stringify({ unsubscribed: true }),
@@ -96,19 +95,21 @@ export async function createBroadcast(
   env: NewsletterEnv,
   params: { subject: string; html: string; text?: string }
 ): Promise<{ id: string }> {
-  if (!env.NEWSLETTER_AUDIENCE_ID) {
-    throw new Error('NEWSLETTER_AUDIENCE_ID is required to use Resend broadcast flow');
+  const segmentId = getSegmentId(env);
+  if (!segmentId) {
+    throw new Error('NEWSLETTER_SEGMENT_ID is required to use Resend broadcast flow');
   }
 
   return resendFetch<{ id: string }>(env, '/broadcasts', {
     method: 'POST',
     body: JSON.stringify({
-      audience_id: env.NEWSLETTER_AUDIENCE_ID,
+      segment_id: segmentId,
       from: env.NEWSLETTER_FROM_EMAIL,
       reply_to: env.NEWSLETTER_REPLY_TO || undefined,
       subject: params.subject,
       html: params.html,
       text: params.text,
+      send: true,
     }),
   });
 }
