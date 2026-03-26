@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { formatPostDate, getAllPosts } from '../lib/posts';
+import { subscribeToNewsletter, type SubscribeUiStatus } from '../lib/newsletter/client';
 import type { Post } from '../types';
 
 function pickPost(posts: Post[], index: number) {
@@ -10,10 +11,51 @@ function pickPost(posts: Post[], index: number) {
 
 const Home: React.FC = () => {
   const posts = getAllPosts();
+  const [email, setEmail] = React.useState('');
+  const [company, setCompany] = React.useState('');
+  const [status, setStatus] = React.useState<SubscribeUiStatus>('idle');
+  const [feedback, setFeedback] = React.useState('');
   const heroPost = pickPost(posts, 0);
   const largeCardPost = pickPost(posts, 1) ?? heroPost;
   const sideCardPost = pickPost(posts, 2) ?? heroPost;
   const bottomCardPost = pickPost(posts, 3) ?? heroPost;
+
+  const onSubscribe = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setStatus('loading');
+    setFeedback('');
+
+    try {
+      const response = await subscribeToNewsletter({
+        email,
+        company,
+        source: 'website_home',
+      });
+
+      if (response.status === 'invalid_email') {
+        setStatus('invalid_email');
+        setFeedback(response.message);
+        return;
+      }
+      if (response.status === 'already_subscribed') {
+        setStatus('already_subscribed');
+        setFeedback(response.message);
+        return;
+      }
+      if (response.ok && response.status === 'success') {
+        setStatus('success');
+        setFeedback(response.message);
+        setEmail('');
+        setCompany('');
+        return;
+      }
+      setStatus('error');
+      setFeedback(response.message || 'Nao foi possivel concluir a inscricao.');
+    } catch {
+      setStatus('error');
+      setFeedback('Nao foi possivel concluir a inscricao agora. Tente novamente.');
+    }
+  };
 
   return (
     <main className="pt-20">
@@ -155,12 +197,42 @@ const Home: React.FC = () => {
             <div className="space-y-8">
               <h2 className="font-headline text-4xl font-bold leading-tight">Novidades por e-mail.<br /><span className="text-primary">Direto na sua caixa.</span></h2>
               <p className="text-secondary leading-relaxed">Junte-se a outros entusiastas que recebem minhas atualizações semanais sobre viagens, fotografia e inspirações. Sem spam, apenas conteúdo.</p>
-              <form className="flex flex-col gap-4">
+              <form className="flex flex-col gap-4" onSubmit={onSubscribe}>
                 <div className="relative">
-                  <input className="w-full bg-surface-container-lowest border-none rounded-xl py-4 px-6 focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-slate-400" placeholder="Seu endereço de e-mail" type="email" />
+                  <input
+                    className="w-full bg-surface-container-lowest border-none rounded-xl py-4 px-6 focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-slate-400"
+                    placeholder="Seu endereço de e-mail"
+                    type="email"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    autoComplete="email"
+                    required
+                    disabled={status === 'loading'}
+                  />
                 </div>
-                <button className="w-full bg-primary text-white font-bold py-4 rounded-xl uppercase tracking-widest text-xs hover:bg-primary-container transition-colors" type="submit">Inscrever-se</button>
+                <input
+                  type="text"
+                  name="company"
+                  value={company}
+                  onChange={(event) => setCompany(event.target.value)}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  className="hidden"
+                  aria-hidden="true"
+                />
+                <button
+                  className="w-full bg-primary text-white font-bold py-4 rounded-xl uppercase tracking-widest text-xs hover:bg-primary-container transition-colors disabled:opacity-70"
+                  type="submit"
+                  disabled={status === 'loading'}
+                >
+                  {status === 'loading' ? 'Enviando...' : 'Inscrever-se'}
+                </button>
               </form>
+              {status !== 'idle' && (
+                <p className={`text-xs ${status === 'success' || status === 'already_subscribed' ? 'text-green-700' : 'text-red-600'}`}>
+                  {feedback}
+                </p>
+              )}
               <p className="text-[10px] text-slate-400 italic">Respeitando sua privacidade. Cancele quando quiser.</p>
             </div>
           </div>
