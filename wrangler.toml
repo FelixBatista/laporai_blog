@@ -9,6 +9,13 @@ database_name = "laporaiDB"
 database_id = "366b3f09-1d23-4f10-a9f6-55340aec2c99"
 migrations_dir = "migrations"
 
+# Pages production inherits bindings only when declared under env.production (Wrangler warning fix).
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "laporaiDB"
+database_id = "366b3f09-1d23-4f10-a9f6-55340aec2c99"
+migrations_dir = "migrations"
+
 [env.production.vars]
 COMMENTS_AUTO_APPROVE = "false"
 NEWSLETTER_BASE_URL = "https://laporai.com"
