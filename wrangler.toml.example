@@ -1,0 +1,13 @@
+name = "laporai-blog"
+compatibility_date = "2026-03-26"
+pages_build_output_dir = "dist"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "laporai-blog"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+
+[vars]
+TURNSTILE_SITE_KEY = "0x4AAAAA..."
+COMMENTS_BASE_URL = "https://laporai.com"
+COMMENTS_AUTO_APPROVE = "false"

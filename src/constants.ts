@@ -3,9 +3,10 @@ import { Post, Photo } from './types';
 export const MOCK_POSTS: Post[] = [
   {
     id: '1',
+    slug: 'os-vales-silenciosos-de-da-lat',
     title: 'Os Vales Silenciosos de Da Lat',
     excerpt: 'Além da agitação das cidades costeiras, encontra-se um santuário nas terras altas. Passamos sete dias mapeando as plantações de café envoltas em névoa e a arquitetura colonial francesa.',
-    content: `Vagar pelas terras altas é se envolver em uma negociação sensorial. O ar é espesso com o perfume de turfa úmida e urze antiga, um perfume que permanece inalterado por milênios. Ao contrário do pulso rápido das paisagens urbanas modernas, a vida aqui se move no ritmo das sombras que mudam.
+    body: `Vagar pelas terras altas é se envolver em uma negociação sensorial. O ar é espesso com o perfume de turfa úmida e urze antiga, um perfume que permanece inalterado por milênios. Ao contrário do pulso rápido das paisagens urbanas modernas, a vida aqui se move no ritmo das sombras que mudam.
 
 Chegamos ao amanhecer, o céu uma paleta machucada de índigo e carvão. As montanhas não emergiram; elas se revelaram lentamente, perdendo camadas de neblina como um viajante cansado removendo casacos pesados. Há um tipo específico de peso no ar nestas partes — uma umidade que não sufoca, mas sim ancora você à terra.`,
     category: 'SUDESTE ASIÁTICO',
@@ -21,9 +22,10 @@ Chegamos ao amanhecer, o céu uma paleta machucada de índigo e carvão. As mont
   },
   {
     id: '2',
+    slug: 'repensando-o-nomadismo-moderno',
     title: 'Repensando o Nomadismo Moderno',
     excerpt: 'A busca pela "autenticidade" está destruindo os lugares que amamos? Um ensaio sobre o desejo de viajar de forma sustentável.',
-    content: 'Conteúdo completo do ensaio aqui...',
+    body: 'Conteúdo completo do ensaio aqui...',
     category: 'ÚLTIMO RELATO',
     author: {
       name: 'Félix Neto',
@@ -37,9 +39,10 @@ Chegamos ao amanhecer, o céu uma paleta machucada de índigo e carvão. As mont
   },
   {
     id: '3',
+    slug: 'verticalidade-vibrante',
     title: 'Verticalidade Vibrante',
     excerpt: 'Navegando pelas escadarias nas encostas da Costa Amalfitana durante a baixa temporada.',
-    content: 'História completa aqui...',
+    body: 'História completa aqui...',
     category: 'EUROPA OCIDENTAL',
     author: {
       name: 'Félix Neto',
