@@ -1,3 +1,4 @@
+import { assertGitHubPushAccess } from '../../_lib/github-admin-auth';
 import { getBaseUrl, requireResendConfig } from '../../_lib/newsletter/config';
 import { randomToken, sha256Hex } from '../../_lib/newsletter/crypto';
 import { createCampaign, createToken, listConfirmedSubscribers, logEvent, markCampaignFailed, markCampaignSent } from '../../_lib/newsletter/repository';
@@ -7,34 +8,22 @@ import type { NewsletterEnv } from '../../_lib/newsletter/types';
 
 const UNSUBSCRIBE_TOKEN_TTL_SECONDS = 60 * 60 * 24 * 365 * 5;
 
-function isAuthorized(request: Request, env: NewsletterEnv): boolean {
-  const secret = env.NEWSLETTER_ADMIN_SECRET;
-  if (!secret) return false;
-  const authHeader = request.headers.get('authorization');
-  const headerSecret = request.headers.get('x-newsletter-admin-secret');
-
-  if (authHeader?.startsWith('Bearer ') && authHeader.slice('Bearer '.length) === secret) return true;
-  if (headerSecret === secret) return true;
-  return false;
-}
-
 function msgHtml(message: string): string {
   return `<p style="padding:10px;border:1px solid #ddd;background:#f7f7f7;">${message}</p>`;
 }
 
-// GET /api/newsletter/admin → redirect to new admin UI
+// GET /api/newsletter/admin → redirect to admin UI
 export const onRequestGet = async (): Promise<Response> => {
   return new Response(null, {
     status: 302,
-    headers: { location: '/admin/newsletter' },
+    headers: { location: '/admin' },
   });
 };
 
 export const onRequestPost = async (context: any): Promise<Response> => {
   const env = context.env as NewsletterEnv;
-  if (!isAuthorized(context.request, env)) {
-    return new Response('Unauthorized', { status: 401 });
-  }
+  const unauthorized = await assertGitHubPushAccess(context.request, env);
+  if (unauthorized) return unauthorized;
 
   const configError = requireResendConfig(env);
   if (configError) {

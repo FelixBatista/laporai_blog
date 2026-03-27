@@ -6,71 +6,231 @@
     <meta name="robots" content="noindex" />
     <title>Lá por Aí — Admin</title>
     <style>
-      [data-custom-nav] {
-        display: inline-flex;
+      /* Overlay panel that sits on top of Decap's main area */
+      #laporai-panel {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        z-index: 9999;
+        background: #f6f8fa; /* Decap surface */
+        flex-direction: column;
+      }
+      #laporai-panel.open { display: flex; }
+
+      /* Re-create Decap's top bar so the panel feels native */
+      #laporai-panel-bar {
+        height: 56px;
+        background: #251f28; /* Decap header color */
+        display: flex;
         align-items: center;
         gap: 4px;
+        padding: 0 12px;
+        flex-shrink: 0;
+      }
+
+      #laporai-panel-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: rgba(255,255,255,0.8);
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-weight: 500;
+        padding: 6px 10px;
+        border-radius: 4px;
+        margin-right: 8px;
+        transition: color 0.15s, background 0.15s;
+      }
+      #laporai-panel-back:hover { color: #fff; background: rgba(255,255,255,0.1); }
+
+      #laporai-panel-title {
+        color: rgba(255,255,255,0.9);
+        font-size: 14px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-weight: 600;
+      }
+
+      #laporai-panel-iframe {
+        flex: 1;
+        border: none;
+        width: 100%;
+        background: #f6f8fa;
+      }
+
+      /* Auth warning bar shown when token can't be found */
+      #laporai-auth-warn {
+        display: none;
+        position: fixed;
+        top: 56px; left: 0; right: 0;
+        z-index: 10000;
+        background: #fff3cd;
+        color: #856404;
+        font-size: 13px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        padding: 8px 16px;
+        text-align: center;
+        border-bottom: 1px solid #ffc107;
       }
     </style>
   </head>
   <body>
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+
+    <!-- Overlay panel (hidden until a nav button is clicked) -->
+    <div id="laporai-panel">
+      <div id="laporai-panel-bar">
+        <button id="laporai-panel-back" onclick="closePanel()">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          Contents
+        </button>
+        <span id="laporai-panel-title"></span>
+      </div>
+      <iframe id="laporai-panel-iframe" src="about:blank" title="Admin panel"></iframe>
+    </div>
+    <div id="laporai-auth-warn">
+      Sign in to Decap first so this panel can use your GitHub identity.
+    </div>
+
     <script>
-      (function () {
-        var CUSTOM_LINKS = [
-          { href: '/admin/comments', label: 'Comentários' },
-          { href: '/admin/newsletter', label: 'Newsletter' },
-        ];
-        var INJECTED_ATTR = 'data-custom-nav-injected';
+    (function () {
+      var INJECTED_ATTR = 'data-custom-nav-injected';
+      var panel = document.getElementById('laporai-panel');
+      var iframe = document.getElementById('laporai-panel-iframe');
+      var panelTitle = document.getElementById('laporai-panel-title');
+      var authWarn = document.getElementById('laporai-auth-warn');
 
-        function injectLinks() {
-          var header = document.querySelector('header');
-          if (!header) return;
-          if (header.getAttribute(INJECTED_ATTR) === 'true') return;
-
-          // Find the first anchor in the header — Decap renders nav links as <a> tags
-          var existingAnchors = header.querySelectorAll('a');
-          if (existingAnchors.length === 0) return;
-
-          // The first anchor is in the nav area; its parent is the nav container
-          var firstAnchor = existingAnchors[0];
-          var navContainer = firstAnchor.parentElement;
-          if (!navContainer) return;
-
-          header.setAttribute(INJECTED_ATTR, 'true');
-
-          CUSTOM_LINKS.forEach(function (link) {
-            if (header.querySelector('a[href="' + link.href + '"]')) return;
-
-            var a = document.createElement('a');
-            a.href = link.href;
-            a.textContent = link.label;
-            // Mirror the className from Decap's own nav links for perfect visual match
-            a.className = firstAnchor.className;
-            // Indicate active state for current page
-            if (window.location.pathname === link.href) {
-              a.style.opacity = '1';
-              a.style.fontWeight = '700';
-            }
-            navContainer.appendChild(a);
-          });
-        }
-
-        // Use MutationObserver to detect when Decap mounts its header
-        var observer = new MutationObserver(function () {
-          if (document.querySelector('header a')) {
-            injectLinks();
+      // Decap 3.x stores user info in localStorage under 'decap-cms-user'
+      // (JSON with { token, ... }). We read it to pass to the embed via
+      // postMessage once the iframe loads — no shared secret required.
+      function getDecapToken() {
+        try {
+          var raw = localStorage.getItem('decap-cms-user');
+          if (raw) {
+            var user = JSON.parse(raw);
+            return user && user.token ? user.token : null;
           }
-        });
-        observer.observe(document.documentElement, { childList: true, subtree: true });
+        } catch (_) {}
+        // Fallback: try redux persist key used in some Decap builds
+        try {
+          var raw2 = localStorage.getItem('cms.user');
+          if (raw2) {
+            var u2 = JSON.parse(raw2);
+            return u2 && u2.token ? u2.token : null;
+          }
+        } catch (_) {}
+        return null;
+      }
 
-        // Fallback: try immediately if header already exists
-        if (document.readyState !== 'loading') {
-          injectLinks();
-        } else {
-          document.addEventListener('DOMContentLoaded', injectLinks);
+      function sendTokenToIframe(token) {
+        if (!token || !iframe.contentWindow) return;
+        iframe.contentWindow.postMessage(
+          { type: 'LAPORAI_GITHUB_TOKEN', token: token },
+          window.location.origin
+        );
+      }
+
+      function openPanel(href, title) {
+        // Build embed URL: add /embed/ prefix
+        var embedHref = href.replace('/admin/', '/admin/embed/');
+        iframe.src = 'about:blank';
+        panelTitle.textContent = title;
+
+        iframe.onload = function () {
+          if (iframe.src === 'about:blank') return;
+          var token = getDecapToken();
+          if (token) {
+            authWarn.style.display = 'none';
+            sendTokenToIframe(token);
+          } else {
+            authWarn.style.display = 'block';
+          }
+        };
+
+        iframe.src = embedHref;
+        panel.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      }
+
+      window.closePanel = function () {
+        panel.classList.remove('open');
+        document.body.style.overflow = '';
+        iframe.src = 'about:blank';
+        authWarn.style.display = 'none';
+      };
+
+      // Token may arrive later (Decap finishes login after this script runs).
+      // Watch for storage changes so we can relay an updated token to an open embed.
+      window.addEventListener('storage', function (e) {
+        if (e.key === 'decap-cms-user' || e.key === 'cms.user') {
+          var token = getDecapToken();
+          if (token && panel.classList.contains('open')) {
+            authWarn.style.display = 'none';
+            sendTokenToIframe(token);
+          }
         }
-      })();
+      });
+
+      // Nav items to inject into Decap's header
+      var CUSTOM_NAV = [
+        {
+          href: '/admin/comments',
+          title: 'Comments',
+          // Material Symbols chat bubble outline (matches Decap's icon style)
+          icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
+        },
+        {
+          href: '/admin/newsletter',
+          title: 'Newsletter',
+          // Material Symbols mail outline
+          icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="m2 7 10 7 10-7" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>',
+        },
+      ];
+
+      function injectLinks() {
+        var header = document.querySelector('header');
+        if (!header) return;
+        if (header.getAttribute(INJECTED_ATTR) === 'true') return;
+
+        var existingAnchors = header.querySelectorAll('a');
+        if (existingAnchors.length === 0) return;
+
+        var firstAnchor = existingAnchors[0];
+        var navContainer = firstAnchor.parentElement;
+        if (!navContainer) return;
+
+        header.setAttribute(INJECTED_ATTR, 'true');
+
+        CUSTOM_NAV.forEach(function (item) {
+          if (navContainer.querySelector('[data-laporai-nav="' + item.href + '"]')) return;
+
+          var btn = document.createElement('button');
+          btn.setAttribute('data-laporai-nav', item.href);
+          btn.className = firstAnchor.className;
+          btn.style.cssText = 'background:none;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;padding:inherit;font:inherit;color:inherit;';
+          btn.innerHTML = item.icon + '<span>' + item.title + '</span>';
+          btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            openPanel(item.href, item.title);
+          });
+          navContainer.appendChild(btn);
+        });
+      }
+
+      var observer = new MutationObserver(function () {
+        if (document.querySelector('header a')) injectLinks();
+      });
+      observer.observe(document.documentElement, { childList: true, subtree: true });
+      if (document.readyState !== 'loading') {
+        injectLinks();
+      } else {
+        document.addEventListener('DOMContentLoaded', injectLinks);
+      }
+    })();
     </script>
   </body>
 </html>

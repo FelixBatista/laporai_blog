@@ -97,12 +97,11 @@ Set these in **Cloudflare Pages -> Settings -> Environment variables**:
 - `NEWSLETTER_REPLY_TO`
 - `NEWSLETTER_BASE_URL`
 - `NEWSLETTER_SEGMENT_ID` (recommended)
-- `NEWSLETTER_ADMIN_SECRET`
 - `TURNSTILE_SITE_KEY`
 - `TURNSTILE_SECRET_KEY`
-- `COMMENTS_ADMIN_SECRET`
 - `COMMENTS_BASE_URL`
 - `COMMENTS_AUTO_APPROVE` (`false` by default)
+- `GITHUB_REPOSITORY` — plain var (not secret), e.g. `FelixBatista/laporai_blog`. Admin API calls are authorized by verifying the caller's GitHub OAuth token has push access to this repo. No separate admin password needed.
 
 Recommended values:
 
@@ -160,19 +159,10 @@ Copy webhook secret into:
 
 ## Admin sending flow
 
-The newsletter admin UI is at:
+The newsletter admin UI is embedded inside Decap CMS at `/admin` — click **Newsletter** in the top bar. No separate password is needed; your GitHub login (the same one used by Decap) authorizes the request.
 
-- `https://laporai.com/admin/newsletter`
-
-Use the form to send (requires `NEWSLETTER_ADMIN_SECRET`):
-
-- Subject
-- HTML body
-- Optional plain text body
-
-The API endpoint `POST /api/newsletter/admin` accepts the secret via:
-- `Authorization: Bearer <NEWSLETTER_ADMIN_SECRET>` header
-- `x-newsletter-admin-secret: <NEWSLETTER_ADMIN_SECRET>` header
+The API endpoint `POST /api/newsletter/admin` requires:
+- `Authorization: Bearer <github_oauth_token>` header (token must have push access to `GITHUB_REPOSITORY`)
 
 Behavior:
 
@@ -212,8 +202,8 @@ Both frontend widget rendering and backend verification are required for comment
 
 ## Comment moderation flow
 
-1. Open `/admin/comments` (or click **Comentários** in the `/admin` top bar).
-2. Fill `COMMENTS_ADMIN_SECRET`.
+1. Open `/admin` and click **Comments** in the top bar.
+2. No password needed — your GitHub login authorizes the request.
 3. Filter `pending` comments and apply moderation actions:
    - approve
    - reject
@@ -254,5 +244,5 @@ Useful commands:
 - Confirmation/unsubscribe tokens have expiry
 - Honeypot spam field is enabled
 - Basic per-IP throttling is enabled via D1
-- Admin sender is protected by `NEWSLETTER_ADMIN_SECRET`
+- Admin endpoints (comments + newsletter) are protected by GitHub OAuth token — only users with push access to `GITHUB_REPOSITORY` can use them
 - Do not hardcode secrets in source files

@@ -16,7 +16,7 @@ export interface NewsletterEnv {
   NEWSLETTER_BASE_URL?: string;
   NEWSLETTER_SEGMENT_ID?: string;
   NEWSLETTER_AUDIENCE_ID?: string;
-  NEWSLETTER_ADMIN_SECRET?: string;
+  GITHUB_REPOSITORY?: string;
 }
 
 export interface SubscriberRecord {

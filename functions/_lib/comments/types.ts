@@ -4,9 +4,9 @@ export interface CommentsEnv {
   DB: any;
   TURNSTILE_SITE_KEY?: string;
   TURNSTILE_SECRET_KEY?: string;
-  COMMENTS_ADMIN_SECRET?: string;
   COMMENTS_BASE_URL?: string;
   COMMENTS_AUTO_APPROVE?: string;
+  GITHUB_REPOSITORY?: string;
 }
 
 export interface PublicCommentRecord {

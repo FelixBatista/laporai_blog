@@ -17,7 +17,7 @@ import { parseSubmitCommentInput, validateSubmitCommentInput } from '../../_lib/
 import type { CommentStatus, CommentsEnv } from '../../_lib/comments/types';
 
 function getHashSalt(env: CommentsEnv): string {
-  return env.COMMENTS_ADMIN_SECRET || env.TURNSTILE_SECRET_KEY || 'laporai-comments-salt';
+  return env.TURNSTILE_SECRET_KEY || 'laporai-comments-salt';
 }
 
 export const onRequestPost = async (context: any): Promise<Response> => {

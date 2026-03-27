@@ -8,7 +8,7 @@ const ALLOWED_STATUSES: Array<CommentStatus | 'all'> = ['pending', 'approved', '
 
 export const onRequestGet = async (context: any): Promise<Response> => {
   const env = context.env as CommentsEnv;
-  const unauthorized = requireCommentsAdminAuth(context.request, env);
+  const unauthorized = await requireCommentsAdminAuth(context.request, env);
   if (unauthorized) return unauthorized;
 
   const url = new URL(context.request.url);
