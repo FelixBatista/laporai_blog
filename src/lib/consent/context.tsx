@@ -35,6 +35,9 @@ export const ConsentProvider: React.FC<{ children: React.ReactNode }> = ({ child
   useEffect(() => {
     const stored = loadConsent();
     setRecord(stored);
+    // Show the banner only if no prior consent is stored. The `mounted` flag
+    // gates banner visibility so it never flickers on the initial server-side
+    // or pre-hydration render.
     setShowBanner(stored === null);
     setMounted(true);
   }, []);
@@ -85,14 +88,15 @@ export const ConsentProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const categories = record?.categories ?? DEFAULT_CATEGORIES;
   const decided = record !== null;
 
-  if (!mounted) {
-    // Avoid hydration mismatch – render nothing until client-side storage is read.
-    return <>{children}</>;
-  }
-
+  // Always render the Provider so consumers (Footer, ConsentBanner, etc.) never
+  // call useConsent() outside of a context. Before mounting we suppress the banner
+  // (showBanner stays false) so nothing flickers on the first paint.
   return (
     <ConsentContext.Provider value={{
-      decided, showBanner, showPreferences, categories,
+      decided,
+      showBanner: mounted && showBanner,
+      showPreferences: mounted && showPreferences,
+      categories,
       acceptAll, rejectNonEssential, saveCustom,
       openPreferences, closePreferences, withdrawConsent,
     }}>
