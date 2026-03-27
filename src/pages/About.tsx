@@ -84,8 +84,7 @@ const About: React.FC = () => {
               <img 
                 alt="Leica Camera" 
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8j8NypA85oC5riCle0SkNnR7FSq_ZeVLTrylhb5BX7-nAAYC4duUAQXjFVjzcIHm-3fKiIJerstEuTVubJDENJ4IGvV0hZQUaZpX6tdGz0ULxkdeoBl-4Guxw6JSd73zYvoIVIk-27h8sHlaR3LWifnwccl04kdfQX6S9ssGWkAOCvHxerjjLV5yEY1snHtFor_UY7F7C9f0MyXObkMfelPMXXdS94qWCc4v4jJZga7z2GX2FeE6NzTovwKyxN-fRMKXF_GMq_ac"
-                referrerPolicy="no-referrer"
+                src="/uploads/placeholder.svg"
               />
               <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
             </div>
@@ -98,8 +97,7 @@ const About: React.FC = () => {
               <img 
                 alt="Field Notes" 
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9JW--DnU31h19zP8B9J0GuOpWXi7DfVxbsMhe5DiN8eQFCuJJU_7GTMsEjwflE_EHwrw60Z83j4ZvXf7e-Nbyowt8SSfDo6FYsYKpy2oC7fWsV6HKj0WTkZkkNMqBVdwftOxC8LZMRjg7-9r0x_zNABRZu4BP6Dah8r6jPQyLtxrk67YpZAC5mLhSsUiKUtkI_3kybGJJHEX0bFpAmGUXgsVZ-0RIhdbEnnExlgD7Wfi3dzyqB87jOdzLFeFrI-y75GYEdlSGw5w"
-                referrerPolicy="no-referrer"
+                src="/uploads/placeholder.svg"
               />
               <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
             </div>
@@ -112,8 +110,7 @@ const About: React.FC = () => {
               <img 
                 alt="The backpack" 
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuArqIjQaR6h4MPKTYhr4VOAXCOdfMELtXkBZA9auOYca1mRlFOIjNQDUy5PghdBjDDkNZr6m--ukbBg2itn3KwQZPSOcI6UpniESHhlsOkxxx_El70jD6DGuiYNhlGFj2aKOlwHVAyYIjN1PzV55ZaxvIHuza3Sa1bxStHHbThGIIv9k7lvLZcbWrfYwv199GELy60Y62fwnl6Xf-v1CFOQSGNRjby6M7LqY2Lky5TdZvkU0qJ1PZ6u9lfWLMDaVDcTICz3t4hu0p8"
-                referrerPolicy="no-referrer"
+                src="/uploads/placeholder.svg"
               />
               <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
             </div>

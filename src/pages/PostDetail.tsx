@@ -5,25 +5,23 @@ import { listComments, submitComment } from '../lib/comments/client';
 import type { PublicComment, SubmitCommentUiStatus } from '../lib/comments/types';
 import { getAllPosts } from '../lib/posts';
 import type { Post } from '../types';
+import { legalMeta } from '../content/legal';
 
 const FALLBACK_POST: Post = {
   id: 'fallback',
   slug: 'fallback',
-  title: 'The Silent Breath of the Misty Highlands',
-  excerpt:
-    "In the heart of the Highlands, time doesn't tick. It exhales.",
+  title: 'Lá por Aí',
+  excerpt: 'Um diário visual dedicado à arte de viajar e às pequenas descobertas pelo caminho.',
   body: '',
-  category: 'Travel',
+  category: 'Viagem',
   date: new Date().toISOString(),
-  readTime: '12 MIN READ',
-  image:
-    'https://lh3.googleusercontent.com/aida-public/AB6AXuD1l6-fjUpwtg0-r_mznjFAJtprxw0uAO9PKx6D34Vsmp8XJnFWw6vGNL3pXJXnn5nC_-eWqCYVIUxcgbWCHT-6C3hcCqteP5kIxBtU1eRvTKoIjQbOiralj3cbmdrqjpBlrBj2FF8ED5-c5DQOTZIYuBeXs6UykqHeY5Q0oYcj51QQGA93u6FK1CbJUQ-5i1icNjSEmQ4sRKux2wwRgkCAJiJmIU5S_5y08-bKbddqnnHe2K1wRx8tStDRaBv5rfdbaebZU-A9k-w',
-  tags: ['SCOTLAND', 'SLOWTRAVEL', 'PHOTOGRAPHY'],
+  readTime: '5 MIN READ',
+  image: '/uploads/placeholder.svg',
+  tags: ['VIAGEM', 'FOTOGRAFIA'],
   author: {
-    name: 'Elena Vance',
-    role: 'Senior Curator & Photographer',
-    avatar:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuCrlItcH3URM0AFSrrQvgbYYw87WJlYj2wQGqoAuQt_SFYBEbtK8EFXxI9JJV4DWcvKP15tX0Gj6884LnyYec_1DG0OLk49k9WBUa-c-08GRsb__Zm04G0JiXItFGJlXV77HWQWAW3R5bEn9DEAdh6nZr9AYb3bqz4eD_bnUbLJP6sGFU_0JuuQgqV9tiJrnyYHmc9NOHXMZ2phuMZh9yGydrNNC51DExR1NTF-pvDyeLZMDpmLFroQTePOn7sXalVRWyTDbtW4LEE',
+    name: 'Larissa Vasconcelos',
+    role: 'Escritora & Fotógrafa',
+    avatar: '',
   },
 };
 
@@ -462,9 +460,23 @@ const PostDetail: React.FC = () => {
                 ) : (
                   <p className="text-xs text-red-600">Protecao anti-spam indisponivel. Verifique a configuracao do Turnstile.</p>
                 )}
-                <p className="text-[10px] text-slate-500">
-                  Ao enviar, voce concorda com a publicacao da sua mensagem e com a moderacao para prevencao de spam.
-                </p>
+                <div className="bg-surface-container-low rounded-lg p-3 text-[11px] text-secondary leading-relaxed space-y-1">
+                  <p>
+                    <strong className="text-on-surface">Aviso de privacidade:</strong>{' '}
+                    O seu nome (e website, se fornecido) será publicado junto ao comentário. O endereço de e-mail, se fornecido, não será publicado — é armazenado de forma protegida para prevenção de spam.
+                  </p>
+                  <p>
+                    Ao submeter, consente que o seu comentário seja publicado e moderado por {legalMeta.controllerName}.
+                    Os dados são tratados ao abrigo do RGPD. Consulte a nossa{' '}
+                    <Link to="/privacidade" className="text-primary hover:underline">Política de Privacidade</Link>
+                    {' '}para exercer os seus direitos (acesso, eliminação, etc.).
+                  </p>
+                  <p>
+                    Protecão anti-spam: Cloudflare Turnstile (
+                    <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">política Cloudflare</a>
+                    ).
+                  </p>
+                </div>
               </div>
               <div className="pt-2">
                 <button

@@ -2,6 +2,7 @@ import React from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
+import ConsentBanner from './ConsentBanner';
 import { motion, AnimatePresence } from 'motion/react';
 
 const Layout: React.FC = () => {
@@ -24,6 +25,7 @@ const Layout: React.FC = () => {
         </AnimatePresence>
       </main>
       <Footer />
+      <ConsentBanner />
     </div>
   );
 };

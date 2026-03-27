@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { formatPostDate, getAllPosts, sortPostsForHome } from '../lib/posts';
 import { subscribeToNewsletter, type SubscribeUiStatus } from '../lib/newsletter/client';
 import type { Post } from '../types';
+import { legalMeta } from '../content/legal';
 
 function pickPost(posts: Post[], index: number) {
   if (posts.length === 0) return undefined;
@@ -20,6 +21,7 @@ const Home: React.FC = () => {
   const [company, setCompany] = React.useState('');
   const [status, setStatus] = React.useState<SubscribeUiStatus>('idle');
   const [feedback, setFeedback] = React.useState('');
+  const [consentChecked, setConsentChecked] = React.useState(false);
   const heroPost = pickPost(sortedPosts, 0);
   const largeCardPost = pickPost(sortedPosts, 1) ?? heroPost;
   const sideCardPost = pickPost(sortedPosts, 2) ?? heroPost;
@@ -34,6 +36,11 @@ const Home: React.FC = () => {
 
   const onSubscribe = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!consentChecked) {
+      setStatus('error');
+      setFeedback('Confirme que leu e aceita a nossa Política de Privacidade para continuar.');
+      return;
+    }
     setStatus('loading');
     setFeedback('');
 
@@ -77,7 +84,7 @@ const Home: React.FC = () => {
           <img 
             alt={heroPost?.title ?? 'Featured Story'}
             className="w-full h-full object-cover" 
-            src={heroPost?.image ?? 'https://picsum.photos/seed/home-hero/1600/900'}
+            src={heroPost?.image ?? '/uploads/placeholder.svg'}
             referrerPolicy="no-referrer"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-on-surface/60 via-transparent to-transparent"></div>
@@ -141,7 +148,7 @@ const Home: React.FC = () => {
               <img
                 alt={largeCardPost?.title ?? 'Post recente'}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
-                src={largeCardPost?.image ?? 'https://picsum.photos/seed/home-large/1200/700'}
+                src={largeCardPost?.image ?? '/uploads/placeholder.svg'}
                 referrerPolicy="no-referrer"
               />
             </div>
@@ -165,7 +172,7 @@ const Home: React.FC = () => {
               <img
                 alt={sideCardPost?.title ?? 'Post de viagem'}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
-                src={sideCardPost?.image ?? 'https://picsum.photos/seed/home-side/700/700'}
+                src={sideCardPost?.image ?? '/uploads/placeholder.svg'}
                 referrerPolicy="no-referrer"
               />
             </div>
@@ -185,7 +192,7 @@ const Home: React.FC = () => {
               <img
                 alt={bottomCardPost?.title ?? 'Post de fotografia'}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
-                src={bottomCardPost?.image ?? 'https://picsum.photos/seed/home-bottom/800/1000'}
+                src={bottomCardPost?.image ?? '/uploads/placeholder.svg'}
                 referrerPolicy="no-referrer"
               />
             </div>
@@ -218,8 +225,7 @@ const Home: React.FC = () => {
                 <img 
                   alt="Join Newsletter" 
                   className="w-full h-full object-cover" 
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIuTC138Vv8opZbY2wd0RThKXWsj-K7wNISdPyNApwxjr_3w3rURpg0aqYGLH6HZ3cvazaVX8CAqpdGYX9YNSOqsCNoK5XCHAYzguUJSc2i11FVV2QzPJ8uTuH6GN5IWHFqVd8-_aKjv5U84mu6XXfFhZzUwT5mz69l-dL0IPbmGb_9gu_bor4mFy37eEcroThwWhfDzbkIAcJ3YT67fTOvHA-mdN5YtaRnCrNbZuOXI4gHqBLw-lkOl1x3FQTVWY-091v8-aXaxE"
-                  referrerPolicy="no-referrer"
+                  src="/uploads/placeholder.svg"
                 />
               </div>
               <div className="absolute -bottom-6 -right-6 w-48 h-48 bg-primary/10 rounded-xl -z-0"></div>
@@ -250,10 +256,26 @@ const Home: React.FC = () => {
                   className="hidden"
                   aria-hidden="true"
                 />
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    className="mt-0.5 w-4 h-4 shrink-0 rounded border-outline-variant accent-primary cursor-pointer"
+                    checked={consentChecked}
+                    onChange={(e) => setConsentChecked(e.target.checked)}
+                    required
+                    disabled={status === 'loading'}
+                  />
+                  <span className="text-[11px] text-slate-500 leading-relaxed">
+                    Li e aceito a{' '}
+                    <Link to="/privacidade" className="text-primary hover:underline">Política de Privacidade</Link>
+                    {' '}e consinto que o meu endereço de e-mail seja utilizado para envio da newsletter.
+                    Posso cancelar a qualquer momento.
+                  </span>
+                </label>
                 <button
                   className="w-full bg-primary text-white font-bold py-4 rounded-xl uppercase tracking-widest text-xs hover:bg-primary-container transition-colors disabled:opacity-70"
                   type="submit"
-                  disabled={status === 'loading'}
+                  disabled={status === 'loading' || !consentChecked}
                 >
                   {status === 'loading' ? 'Enviando...' : 'Inscrever-se'}
                 </button>
@@ -263,7 +285,9 @@ const Home: React.FC = () => {
                   {feedback}
                 </p>
               )}
-              <p className="text-[10px] text-slate-400 italic">Respeitando sua privacidade. Cancele quando quiser.</p>
+              <p className="text-[10px] text-slate-400 italic">
+                Dados tratados por {legalMeta.controllerName} · Sem spam · Cancele quando quiser.
+              </p>
             </div>
           </div>
         </div>

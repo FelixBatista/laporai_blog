@@ -24,8 +24,7 @@ const Blog: React.FC = () => {
           <img
             alt="Expansive mountain lake landscape"
             className="w-full h-full object-cover"
-            src={featuredPost?.image ?? 'https://picsum.photos/seed/blog/1400/600'}
-            referrerPolicy="no-referrer"
+            src={featuredPost?.image ?? '/uploads/placeholder.svg'}
           />
         </div>
         <div className="md:-mt-24 md:ml-12 relative z-10 max-w-2xl bg-white/70 backdrop-blur-2xl p-8 md:p-12 editorial-shadow rounded-lg">

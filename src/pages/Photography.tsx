@@ -52,8 +52,7 @@ const Photography: React.FC = () => {
             <img 
               alt="Majestic mountain peaks at dawn" 
               className="w-full h-[600px] object-cover rounded-lg shadow-sm" 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmO7-6cuGIGGr5WzApvfqpVp_uMgDqzIvDPzeGmjhb-9OI4WHitPTFKCv15k8fuyIkvRAqzrJ7q9vl0e1rzzYaxCKV3UGtEALoXMy7-fnszurkLpwqXVNm1sbPH0RGAIrFOP-Gx3IKTiqM2yPuv_g0DKHCR7wTRmxQk84D0MfJrXtmOa8GL_7bqUhqJ_79gOQl_FY30TfeoowkzQrnXlOkVHV1Mz5B6WoHMMIoTj3AiMFDSESaCaRkXxHYv33AsLf8tLBXE7sqojw"
-              referrerPolicy="no-referrer"
+              src="/uploads/placeholder.svg"
             />
             <div className="absolute -bottom-8 -right-8 bg-surface-bright/70 backdrop-blur-xl p-8 max-w-xs hidden md:block rounded-lg shadow-sm">
               <p className="font-label text-xs tracking-widest text-primary font-bold uppercase mb-2">Série em Destaque</p>

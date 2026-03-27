@@ -12,6 +12,10 @@ import PostDetail from './pages/PostDetail';
 import Photography from './pages/Photography';
 import About from './pages/About';
 import Contact from './pages/Contact';
+import Privacidade from './pages/Privacidade';
+import Cookies from './pages/Cookies';
+import Termos from './pages/Termos';
+
 export default function App() {
   return (
     <Routes>
@@ -22,6 +26,9 @@ export default function App() {
         <Route path="photography" element={<Photography />} />
         <Route path="about" element={<About />} />
         <Route path="contact" element={<Contact />} />
+        <Route path="privacidade" element={<Privacidade />} />
+        <Route path="cookies" element={<Cookies />} />
+        <Route path="termos" element={<Termos />} />
         <Route path="*" element={<div className="min-h-[60vh] flex items-center justify-center font-headline text-2xl">Page under construction.</div>} />
       </Route>
     </Routes>
