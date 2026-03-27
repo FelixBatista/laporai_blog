@@ -17,7 +17,7 @@ database_id = "366b3f09-1d23-4f10-a9f6-55340aec2c99"
 migrations_dir = "migrations"
 
 [env.production.vars]
-COMMENTS_AUTO_APPROVE = "false"
+COMMENTS_AUTO_APPROVE = "true"
 NEWSLETTER_BASE_URL = "https://laporai.com"
 NEWSLETTER_FROM_EMAIL = "Laporai Newsletter <hello@newsletter.laporai.com>"
 NEWSLETTER_REPLY_TO = "hello@newsletter.laporai.com"
