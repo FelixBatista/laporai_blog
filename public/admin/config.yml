@@ -25,17 +25,15 @@ collections:
       - { label: "Category", name: "category", widget: "string" }
       - { label: "Date", name: "date", widget: "datetime" }
       - { label: "Read time", name: "readTime", widget: "string", default: "5 min de leitura" }
-      - {
-          label: "Popularidade (home)"
-          name: "popularity"
-          widget: "number"
-          default: 0
-          value_type: "int"
-          min: 0
-          max: 100
-          required: false
-          hint: "Usado na ordem “Populares” na página inicial. Maior = mais em cima. Opcional."
-        }
+      - label: "Popularidade (home)"
+        name: "popularity"
+        widget: "number"
+        default: 0
+        value_type: "int"
+        min: 0
+        max: 100
+        required: false
+        hint: 'Usado na ordem "Populares" na página inicial. Maior = mais em cima. Opcional.'
       - { label: "Cover image", name: "image", widget: "image" }
       - label: "Tag de seção"
         name: "tags"
